@@ -1,0 +1,12 @@
+[package]
+name = "asca_timer"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+name = "asca_timer"
+path = "src/lib.rs"
+crate-type = ["lib"]   # The crate types to generate.
+
+[dependencies]
+float-cmp = { workspace = true, features = ["std"] }
