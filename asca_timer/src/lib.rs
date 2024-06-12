@@ -1,6 +1,6 @@
 //! # ASCA-Timer
 //!
-//! 'asca_timer_rs' is a crate designed for the ASCA engine, although there may be other uses out
+//! 'asca_timer' is a crate designed for the ASCA engine, although there may be other uses out
 //! of it.
 //!
 //! This crate is intended to be simple and easy to implement, with the user only needing to call a
