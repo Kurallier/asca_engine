@@ -72,6 +72,14 @@ impl Timer {
             .eq(&self.timer_duration.as_millis())
     }
 
+    fn check_timer_nano(&mut self) -> bool {
+        if self.time_elapsed.elapsed().as_nanos().eq(&self.timer_duration.as_nanos()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /// The main function of this libary.
     ///
     /// This **must** be called every loop,
@@ -104,6 +112,20 @@ impl Timer {
         self
     }
 
+    pub fn timer_tick_nano(&mut self) -> &mut Self {
+        if self.check_timer() == true {
+            if self.repeating == true {
+                self.completed = false;
+                self.time_elapsed = Instant::now();
+            } else {
+                self.completed = true;
+                self.counting = false;
+            }
+            self.completions += 1;
+        }
+        self
+    }
+
     /// Checkes the completion status of the timer
     ///
     /// Returns a bool inidcating completion status
@@ -118,6 +140,10 @@ impl Timer {
     /// ```
     pub fn timer_status(&mut self) -> bool {
         self.completed
+    }
+
+    pub fn timer_completions(&self) -> u64 {
+        self.completions
     }
 
     /// Will try to execute any function that is passed in.
