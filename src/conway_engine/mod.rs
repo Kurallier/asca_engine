@@ -7,18 +7,9 @@ use con_board::ConAutomataBoard;
 use sdl2::{
     event::Event,
     keyboard::Keycode,
-    pixels::{Color, PixelFormatEnum},
-    rect::Rect,
-    render::{Canvas, RenderTarget, Texture, TextureCreator},
-    video::{Window, WindowContext},
-    VideoSubsystem,
 };
 
 use self::con_render::ConwayRenderer;
-
-//TODO: Create the ConwayEngine API
-// Below are just example functions for the api,
-// make better fucntions you fool
 
 #[derive(Default, PartialEq)]
 enum EngineState {
@@ -35,8 +26,6 @@ pub struct ConwayEngine {
     renderer: ConwayRenderer,
 }
 
-const WINDOW_W: u32 = 1920;
-const WINDOW_H: u32 = 1080;
 const BOARD_SIZE_DEFAULT: usize = 2500;
 
 impl ConwayEngine {
@@ -52,7 +41,8 @@ impl ConwayEngine {
 
         Self {
             current_tick: 0,
-            engine_state: EngineState::default(),
+            //HACK: Temporary
+            engine_state: EngineState::Running,
             game_board: board,
             sdl_systems: sdl2_instance,
             renderer,
@@ -67,8 +57,6 @@ impl ConwayEngine {
 
     // TODO:
     // Implement a timer for rendering, fps
-    //TODO:
-    //Refactor rendering(fps) code into it's own module
     //TODO:
     //Implement a tick timer for the game logic, tps
     //TODO:
@@ -97,10 +85,10 @@ impl ConwayEngine {
 
             // Where the tick implementation is important
             // --------------------------------
+            /*
             board.calculate_surr_life();
             board.apply_con_rules();
-            /*
-             */
+            */
             // --------------------------------
 
             renderer.draw();

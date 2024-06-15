@@ -65,17 +65,11 @@ impl Timer {
     }
 
     //Internal function, chects the status of the timer
-    fn check_timer(&mut self) -> bool {
-        if self
-            .time_elapsed
+    fn check_timer(&self) -> bool {
+        self.time_elapsed
             .elapsed()
-            .as_secs_f64()
-            .approx_eq(self.timer_duration.as_secs_f64(), self.check_margin)
-        {
-            return true;
-        } else {
-            return false;
-        }
+            .as_millis()
+            .eq(&self.timer_duration.as_millis())
     }
 
     /// The main function of this libary.
@@ -88,20 +82,24 @@ impl Timer {
     ///
     /// # Example
     /// ```rust,ignore
-    ///     'main: loop {
+    ///     loop {
     ///         //--snip--
     ///         timer.timer_tick();
     ///     }
     pub fn timer_tick(&mut self) -> &mut Self {
-        if self.check_timer() == true {
-            if self.repeating == true {
-                self.completed = false;
-                self.time_elapsed = Instant::now();
-            } else {
+        if self.check_timer() {
+            if self.counting {
                 self.completed = true;
-                self.counting = false;
+                self.completions += 1;
+                if self.repeating == true {
+                    self.time_elapsed = Instant::now();
+                } else {
+                    self.counting = false;
+                }
+            } else {
+                self.completed = false;
+                self.counting = true;
             }
-            self.completions += 1;
         }
         self
     }
@@ -113,11 +111,12 @@ impl Timer {
     /// # Example
     ///
     /// ```rust,ignore
+    /// //--snip--
     /// if timer.timer_status == true {
     ///     println!("Hello World");
     /// }
     /// ```
-    pub fn timer_status(&self) -> bool {
+    pub fn timer_status(&mut self) -> bool {
         self.completed
     }
 
@@ -128,7 +127,7 @@ impl Timer {
     ///
     /// # Example
     /// ```rust, ignore
-    ///     
+    /// //--snip--
     /// let result = timer.try_execute(|| {
     ///     println!("It works");
     ///     });
@@ -142,6 +141,10 @@ impl Timer {
         } else {
             Err(())
         }
+    }
+
+    pub fn num_completions(&self) -> u64 {
+        self.completions
     }
 }
 
