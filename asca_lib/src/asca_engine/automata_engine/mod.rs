@@ -1,25 +1,16 @@
-use sdl2::{
-    pixels::Color,
-    rect::Point,
-    render::{Canvas, RenderTarget},
-    video::Window,
-};
+use sdl2::rect::Point;
 
-mod con_automata;
+mod automaton;
+use automaton::Automaton;
 
 use array2d::Array2D;
-use rand::{
-    distributions::{Bernoulli, Distribution},
-    Rng,
-};
+use rand::distributions::{Bernoulli, Distribution};
 
-use self::con_automata::ConAutomata;
-
+//This is the object that contains a 2d matrix of Automaton objects
 #[derive(Debug, Clone)]
-//This is the object that contains a 2d matrix of Automata objects
-pub struct ConAutomataBoard(Array2D<ConAutomata>);
+pub struct AutomataBoard(Array2D<Automaton>);
 
-impl ConAutomataBoard {
+impl AutomataBoard {
     //This function takes 2 parameters:
     //board_w corresponds to the row;
     //board_h corresponds to collums
@@ -47,19 +38,18 @@ impl ConAutomataBoard {
 
             c_count += 1;
 
-            return ConAutomata::new(r_tmp as i32, c_tmp as i32);
+            return Automaton::new(r_tmp as i32, c_tmp as i32);
         };
         //Wierd ass lambda function
 
-        ConAutomataBoard(Array2D::filled_by_row_major(
+        AutomataBoard(Array2D::filled_by_row_major(
             increment,
             board_w.into(),
             board_h.into(),
         ))
-        .clone()
     }
 
-    pub fn get_all_cells(&self) -> Vec<&ConAutomata> {
+    pub fn get_all_cells(&self) -> Vec<&Automaton> {
         let elements_iter = self.0.elements_row_major_iter();
 
         let cells = elements_iter.collect();
@@ -105,50 +95,17 @@ impl ConAutomataBoard {
         }
     }
 
-    //TODO: Refactor code if needed
-    pub fn sdl2_draw_cells(&self, sdl2_draw: &mut Canvas<Window>) {
-        sdl2_draw.set_draw_color(Color::MAGENTA);
-
-        let conway_entities = self.get_all_cells();
-
-        for i in conway_entities {
-            let cell_state = i.get_automata_state();
-            if cell_state == true {
-                sdl2_draw.draw_point(i.get_point()).unwrap();
-            }
-        }
-
-        println!("Drawn cells");
-        /*
-                sdl2_draw.set_draw_color(Color::GREEN);
-
-
-                let points = self
-                    .0
-                    .elements_row_major_iter()
-                    .filter(|&&x| x.get_automata_state() == true);
-
-                let mut vec_points: Vec<Point> = Vec::new();
-
-                points.for_each(|x| vec_points.push(x.get_point()));
-
-                match sdl2_draw.draw_points(vec_points.as_slice()) {
-                    Ok(_) => (),
-                    Err(t) => panic!("{}", t),
-                };
-        */
-    }
-
     pub fn get_cells_point(&mut self) -> Vec<Point> {
         let points: Vec<Point> = self
             .0
             .elements_row_major_iter()
-            .map(|&cell| cell.get_point()).collect();
+            .map(|&cell| cell.get_point())
+            .collect();
         points
     }
 
     //TODO: Refactor code
-    pub fn calculate_surr_life(&mut self) {
+    fn calculate_surr_life(&mut self) -> &mut Self {
         let board_w = self.0.num_rows();
         let board_h = self.0.num_columns();
 
@@ -219,9 +176,10 @@ impl ConAutomataBoard {
                 curr_cell.set_alive_neigbors(alive_neighbors);
             }
         }
+        self
     }
 
-    pub fn apply_con_rules(&mut self) {
+    fn apply_con_rules(&mut self) -> &mut Self {
         //If cell is alive, and has less than 2 live negibors
         //it dies
         //
@@ -259,5 +217,10 @@ impl ConAutomataBoard {
                 cell.set_alive_neigbors(0);
             }
         }
+        self
+    }
+
+    pub fn advance(&mut self) {
+        self.calculate_surr_life().apply_con_rules();
     }
 }

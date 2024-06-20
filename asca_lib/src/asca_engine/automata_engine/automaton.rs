@@ -3,18 +3,18 @@ use sdl2::rect::Point;
 #[derive(Debug, Clone, Copy)]
 //Acutal Automata object, holds the position as a vec2, the state, and the amount of alive
 //neighbors
-pub struct ConAutomata {
+pub struct Automaton {
     pub sdl_point: Point,
     cell_state: bool,
     pub alive_neighbors: u8,
 }
 
-impl ConAutomata {
+impl Automaton {
     pub fn new<T>(x: T, y: T) -> Self
     where
         T: Clone + PartialEq + PartialOrd + Into<i32>,
     {
-        ConAutomata {
+        Automaton {
             sdl_point: Point::new(x.into(), y.into()),
             cell_state: false,
             alive_neighbors: 0,
