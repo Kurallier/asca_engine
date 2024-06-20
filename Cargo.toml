@@ -11,7 +11,7 @@ members = ["asca_timer"]
 default_members = ["asca_timer"]
 
 [workspace.dependencies]
-float-cmp = { version = "0.9.0", features = ["std"] }
+#float-cmp = { version = "0.9.0", features = ["std"] }
 
 [dependencies]
 array2d = "0.3.2"

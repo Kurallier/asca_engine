@@ -3,17 +3,17 @@ use asca_timer::Timer;
 #[derive(Debug)]
 pub struct FrameRateManager {
     pub frame_timer: Timer,
-    frame_counter: u64,
+    synced: bool,
 }
 
 impl Default for FrameRateManager {
-    //Will create the fps_manager with a 30Hz rate
+    //Will create the fps_manager with a 200Hz rate
     fn default() -> Self {
-        let duration = std::time::Duration::from_millis(1000);
+        let duration = std::time::Duration::from_millis(5);
         let timer = Timer::new(duration, std::time::Instant::now(), true);
         Self {
             frame_timer: timer,
-            frame_counter: 0,
+            synced: false,
         }
     }
 }
@@ -24,11 +24,22 @@ impl FrameRateManager {
         let timer = Timer::new(duration, std::time::Instant::now(), true);
         Self {
             frame_timer: timer,
-            frame_counter: 0,
+            synced: false,
         }
     }
     pub fn should_draw(&mut self) -> bool {
-        //self.frame_timer.timer_tick();
-        self.frame_timer.timer_tick().timer_status()
+        self.timer_sync()
+            .frame_timer
+            .timer_tick_nano()
+            .is_completed()
+    }
+
+    fn timer_sync(&mut self) -> &mut Self {
+        if self.synced {
+            return self;
+        };
+        self.frame_timer.reset_count();
+        self.synced = true;
+        self
     }
 }

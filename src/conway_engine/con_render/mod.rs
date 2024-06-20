@@ -111,11 +111,7 @@ impl ConwayRenderer {
 
     //TODO: Pass over the pixel data to this funciton
     pub fn draw(&mut self) -> &mut Self {
-        let fps_manager = &mut self.fps_mng.frame_timer;
-        fps_manager.timer_tick();
-
-        if fps_manager.timer_status() {
-            println!("should draw");
+        if self.fps_mng.should_draw() {
             let canvas = self.window_data.canvas_mut();
 
             let background_texture_data = &mut self.background_texture;
@@ -159,6 +155,7 @@ impl ConwayRenderer {
                 })
                 .unwrap();
 
+            //Map the texture to the canvas
             texture_vec.iter().for_each(|x| {
                 canvas.copy(x.0, None, None).unwrap();
             });
@@ -166,8 +163,6 @@ impl ConwayRenderer {
             canvas.present();
             self
         } else {
-            println!("shouldn't draw");
-            println!("{:?}", fps_manager);
             return self;
         }
     }

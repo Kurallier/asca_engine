@@ -11,13 +11,14 @@ pub struct WindowData {
 // Window Height (In pixels) will be 1080
 impl WindowData {
     pub fn new_with_default(video_sys: &VideoSubsystem) -> WindowData {
-        let window_w = 1920;
-        let window_h = 1080;
+        let window_w = 1280;
+        let window_h = 720;
         let window = video_sys
             .window("ASCA Rewrite", window_w, window_h)
-            .position_centered()
+            //.hidden()
+            //.position_centered()
             .resizable()
-//            .fullscreen_desktop()
+            //.fullscreen_desktop()
             .build()
             .expect("Failed to create window!");
         let canvas = window.into_canvas().build().unwrap();

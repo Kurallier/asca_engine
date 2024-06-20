@@ -9,4 +9,4 @@ path = "src/lib.rs"
 crate-type = ["lib"]   # The crate types to generate.
 
 [dependencies]
-float-cmp = { workspace = true, features = ["std"] }
+#float-cmp = { workspace = true, features = ["std"] }
