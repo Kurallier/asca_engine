@@ -1,9 +1,11 @@
+use std::thread::spawn;
+
 use sdl2::{event::Event, keyboard::Keycode};
 
 mod automata_engine;
 mod render_engine;
-mod tick_timer;
 mod thread_manager;
+mod tick_timer;
 
 use crate::sdl2_manager::SDLSystems;
 use automata_engine::AutomataBoard;
